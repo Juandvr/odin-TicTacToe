@@ -1,5 +1,5 @@
 const gameboard = (() => {
-    const board = [];
+    let board = [];
 
     for(let i = 0; i < 9; i++) {
         board[i] = '';
@@ -7,11 +7,15 @@ const gameboard = (() => {
 
     const getBoard = () => board;
 
+    const setBoard = (newBoard) => {
+        board = newBoard;
+    }
+
     const placeMark = (move, player) => {
         getBoard()[move] = player;
     }
 
-    return { getBoard, placeMark };
+    return { getBoard, placeMark, setBoard };
 })();
 
 function Game(
@@ -21,11 +25,11 @@ function Game(
     players = [
         {
             name: playerOne,
-            token: 'x'
+            token: 'X'
         },
         {
             name: playerTwo,
-            token: 'o'
+            token: 'O'
         }
     ];
 
@@ -36,6 +40,10 @@ function Game(
     }
 
     const getActivePlayer = () => activePlayer;
+
+    const setActivePlayer = () => {
+        activePlayer = players[0];
+    }
 
     const winningConditions = [
         [0, 1, 2],
@@ -48,7 +56,7 @@ function Game(
         [2, 4, 6]
     ];
 
-    function checkWin() {
+    const checkWin = () => {
         return winningConditions.some(condition => {
             return condition.every(index => {
                 return gameboard.getBoard()[index] === getActivePlayer().token;
@@ -56,23 +64,58 @@ function Game(
         });
     }
 
-    const playRound = () => {
+    const playRound = (move) => {
         console.log(`${getActivePlayer().name}'s turn`);
 
-        let move = prompt('in which cell do you want to play?');
-
-        gameboard.placeMark(parseInt(move), getActivePlayer().token);
+        gameboard.placeMark(move, getActivePlayer().token);
 
         console.log(gameboard.getBoard());
 
         if(checkWin()) {
             console.log(`${getActivePlayer().name} wins!`);
         }
-
-        switchPlayer();
     };
 
-    return { getActivePlayer, playRound };
+    return { getActivePlayer, playRound, checkWin, setActivePlayer, switchPlayer };
 }
 
-const game = Game();
+function displayGame() {
+    const cells = document.querySelectorAll('.cell');
+    const status = document.getElementById('status');
+    const resetButton = document.getElementById('reset');
+    let gameActive = true;
+
+    const game = Game();
+
+    cells.forEach(cell => cell.addEventListener('click', (event) => {
+        const clickedCell = event.target;
+        const clickedCellIndex = parseInt(clickedCell.getAttribute('data-index'));
+
+        if(!gameActive) {
+            return;
+        }
+
+        game.playRound(clickedCellIndex);
+        clickedCell.textContent = game.getActivePlayer().token;
+
+        if(game.checkWin()) {
+            status.textContent = `${game.getActivePlayer().name} wins!`;
+            gameActive = false;
+            return;
+        }
+        
+        game.switchPlayer();
+
+        status.textContent = `${game.getActivePlayer().name}'s turn`;
+    }))
+
+    resetButton.addEventListener('click', () => {
+            gameboard.setBoard(["", "", "", "", "", "", "", "", ""]);
+            gameActive = true;
+            game.setActivePlayer();
+            status.textContent = '';
+            cells.forEach(cell => cell.textContent = '');
+    })
+}
+
+displayGame();
