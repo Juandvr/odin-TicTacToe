@@ -7,19 +7,34 @@
     <title>Tic Tac Toe</title>
 </head>
 <body>
-    <div id="board">
-        <div class="cell" data-index="0"></div>
-        <div class="cell" data-index="1"></div>
-        <div class="cell" data-index="2"></div>
-        <div class="cell" data-index="3"></div>
-        <div class="cell" data-index="4"></div>
-        <div class="cell" data-index="5"></div>
-        <div class="cell" data-index="6"></div>
-        <div class="cell" data-index="7"></div>
-        <div class="cell" data-index="8"></div>
+    <h1>Tic-Tac-Toe</h1>
+    <div id="start-screen">
+        <img id="imagen" src="/media/giphy.gif" alt="">
+        <div id="player1">
+        <input id="player1Name" class="playerName" type="text">
+        <label>Player 1</label>
+        </div>
+        <div id="player2">
+        <input id="player2Name" class="playerName" type="text">
+        <label>Player 2</label>
+        </div>
+        <button id="startBtn">Start</button>
     </div>
-    <div id="status"></div>
-    <button id="reset">Reset game</button>
+    <div id="game">
+        <div id="board">
+            <div class="cell" id="cell0" data-index="0"></div>
+            <div class="cell" id="cell1" data-index="1"></div>
+            <div class="cell" id="cell2" data-index="2"></div>
+            <div class="cell" id="cell3" data-index="3"></div>
+            <div class="cell" id="cell4" data-index="4"></div>
+            <div class="cell" id="cell5" data-index="5"></div>
+            <div class="cell" id="cell6" data-index="6"></div>
+            <div class="cell" id="cell7" data-index="7"></div>
+            <div class="cell" id="cell8" data-index="8"></div>
+        </div>
+        <div id="status"></div>
+        <button id="reset">Reset game</button>
+    </div>
 </body>
     <script src="script.js"></script>
 </html>

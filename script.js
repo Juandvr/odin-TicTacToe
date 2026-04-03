@@ -12,7 +12,9 @@ const gameboard = (() => {
     }
 
     const placeMark = (move, player) => {
-        getBoard()[move] = player;
+        if (board[move] === '') {
+            getBoard()[move] = player;
+        }
     }
 
     return { getBoard, placeMark, setBoard };
@@ -64,6 +66,10 @@ function Game(
         });
     }
 
+    const checkTie = () => {
+        return gameboard.getBoard().every(cell => cell !== '');
+    }
+
     const playRound = (move) => {
         console.log(`${getActivePlayer().name}'s turn`);
 
@@ -76,16 +82,16 @@ function Game(
         }
     };
 
-    return { getActivePlayer, playRound, checkWin, setActivePlayer, switchPlayer };
+    return { getActivePlayer, playRound, checkWin, checkTie, setActivePlayer, switchPlayer };
 }
 
-function displayGame() {
+function displayGame(p1, p2) {
     const cells = document.querySelectorAll('.cell');
     const status = document.getElementById('status');
     const resetButton = document.getElementById('reset');
     let gameActive = true;
 
-    const game = Game();
+    const game = Game(p1, p2);
 
     cells.forEach(cell => cell.addEventListener('click', (event) => {
         const clickedCell = event.target;
@@ -95,11 +101,22 @@ function displayGame() {
             return;
         }
 
-        game.playRound(clickedCellIndex);
-        clickedCell.textContent = game.getActivePlayer().token;
+        if(gameboard.getBoard()[clickedCellIndex] === '') {
+            game.playRound(clickedCellIndex);
+            clickedCell.textContent = game.getActivePlayer().token;
+        } else {
+            status.textContent = `Cell already occupied! Choose another cell.`;
+            return;
+        }
 
         if(game.checkWin()) {
             status.textContent = `${game.getActivePlayer().name} wins!`;
+            gameActive = false;
+            return;
+        }
+
+        if(game.checkTie()) {
+            status.textContent = `It's a tie!`;
             gameActive = false;
             return;
         }
@@ -118,4 +135,19 @@ function displayGame() {
     })
 }
 
-displayGame();
+const startBtn = document.getElementById("startBtn");
+
+startBtn.addEventListener('click', () => {
+    const playerOneName = document.getElementById("player1Name").value;
+    const playerTwoName = document.getElementById("player2Name").value;
+
+    console.log(`P1: ${playerOneName} P2: ${playerTwoName}`);
+
+    const startScreen = document.getElementById("start-screen");
+    startScreen.style.display = "none";
+
+    const game = document.getElementById("game");
+    game.style.display = "grid";
+
+    displayGame(playerOneName, playerTwoName);
+})
